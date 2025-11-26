@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-export function Student(){
+export function StudentLayout(){
     return (
         <div>
             <h1>Student page</h1>

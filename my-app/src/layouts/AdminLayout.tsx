@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 
-export function Admin(){
+export function AdminLayout(){
     return (
         <div>
             <h1>Admin page</h1>
