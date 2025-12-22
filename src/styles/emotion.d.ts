@@ -1,6 +1,8 @@
-import "@emotion/react";
-import type { AppTheme } from "./styles/theme";
-declare module "@emotion/react" {
-// расширяем базовую Theme формой твоей темы
+import '@emotion/react';
+import { theme } from './theme';
+
+type AppTheme = typeof theme;
+
+declare module '@emotion/react' {
 export interface Theme extends AppTheme {}
 }
