@@ -4,7 +4,7 @@ import { LoginPage } from "../pages/Login/LoginPage";
 import { AdminPage } from "../pages/Admin/AdminPage";
 import { StudentPage } from "../pages/Student/StudentPage";
 import { NotFoundPage } from "../pages/Errors/NotFoundPage";
-import StudentsTest from "../pages/Student/StudentsTest";
+import StudentsTestListPage from "../pages/Student/StudentsTestListPage";
 import StudentTestPage from "../pages/Student/StudentTestPage";
 import { StudentLayout } from "../layouts/StudentLayout";
 import { AdminLayout } from "../layouts/AdminLayout";
@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
                 element: <StudentLayout />,
                 children: [
                     {index: true, element: <StudentPage />},
-                    {path: 'tests', element: <StudentsTest />},
+                    {path: 'tests', element: <StudentsTestListPage />},
                     {path: 'test/:id', element: <StudentTestPage />},
                     {
                     path: 'statistics',

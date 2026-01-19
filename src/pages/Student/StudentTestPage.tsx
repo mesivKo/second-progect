@@ -1,103 +1,59 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import '../../index.css'
+import { TestCard } from '../../components/tests/TestCard';
 import styled from '@emotion/styled';
+import type { Attempt, TestResult } from '../../types/testing';
 
-const TestItem = styled.li`
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 16px 16px;
-    border: 1px solid #EFEFEF;
-    border-radius: ${p => p.theme.radius.md};
-    box-shadow: 0px 1px 2px 0px #0000000D;
-`;
-
-const Option = styled.li`
-    display: flex;
-    align-items: flex-start;
-    width: 800px;
-    margin: 8px;
-    justify-content: space-between;
-    padding: 16px 16px;
-    background-color: white;
-    border-radius: ${p => p.theme.radius.md};
+const Grid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 `;
 
 export default function StudentTestPage() {
-    const [questions, setQuestions] = useState([]);
+    const [attempts, setAttempts] = useState<Attempt[]>([]);
+    const [tests, setTests] = useState<TestResult[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    console.log('Bывести_MACCИB', questions);
-    const params = useParams();
-    const testId = Number(params.id);
-
     useEffect(() => {
-        const data = '/public/data/questions.json';
-        let ignore = false;
+        const tests = '/public/data/tests.json';
+        const attempts = '/public/data/attempts.json';
+        Promise.all([fetch(tests), fetch(attempts)])
+            .then(async ([res1, res2]) => {
+                if (!res1.ok) throw new Error(`HTTP: ${res1.status}`);
+                if (!res2.ok) throw new Error(`HTTP: ${res2.status}`);
 
-        fetch(data)
-            .then(response => {
-                if(!response.ok) throw new Error ('HTTP: ${response.status}');
-                return response.json()
+                const t = await res1.json();
+                const a = await res2.json();
+
+                setTests(t);
+                setAttempts(a);
+                return Promise.all([t, a]);
             })
-            .then(all => {
-                if (ignore) return;
-                const filteredQuestions = all.filter(q => q.testId === testId);
-                setQuestions(filteredQuestions);})
             .catch(e => {
                 setError(e.message);
-                if (ignore) return;})
-            .finally (() => setLoading(false))
-        return () => {ignore = true};
-    }, [testId]);
+                // error
+            })
+            .finally(() => setLoading(false));
+    }, []);
 
-
-
-    const filteredQuestions = questions.filter(q => q.testId === testId);
-   // if (loading) return <div> className="custom-loader"</div>;
+    if (loading) return <div className="custom-loader" />;
+    if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
     return (
-        <div>
-            <h2>StudentTestPage {params.id}</h2>
-            <p>Lorom ipsum-dolor</p>
-            {loading && <div className="custom-loader"></div>}
-            {error && <div>{error}</div>}
-            <ul>
-                {filteredQuestions.map(q => (
-                <TestItem key={q.id}>
-                    <h3>{q.text}</h3>
-                    
-                    {q.type === 'multiple' && (
-                        <ul>
-                            {q.options.map((o, i) => (
-                                <Option key={i}>
-                                    <label>
-                                        <input type="checkbox" name={`q-${q.id}`} />
-                                        {o}
-                                    </label>
-                                </Option>
-                            ))}
-                        </ul>
-                    )}
-                    
-                    {q.type === 'single' && (
-                        <ul>
-                            {q.options.map((o, i) => (
-                                <Option key={i}>
-                                    <label>
-                                        <input type="radio" name={`q-${q.id}`} />
-                                        {o}
-                                    </label>
-                                </Option>
-                            ))}
-                        </ul>
-                    )}
-                </TestItem>
-                ))}
-                {filteredQuestions.length === 0 && <li>Вопросы не найдены</li>}
-            </ul>
+        <div className="page-container">
+            <h1>Тестирование №100</h1>
+            <Grid>
+                <div>
+                    {tests.map(test => (
+                        <TestCard key={test.id} test={test} />
+                    ))}
+                </div>
+                <div>
+                    <h5>Таймеp</h5>
+                    <div>02:59</div>
+                </div>
+            </Grid>
         </div>
     );
 }

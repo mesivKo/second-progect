@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SocialIcon } from "../../icons/icons";
 import { Modal } from "../../components/Modal";
 import ChangeModalPass from "../../components/ChangeModalPass";
+import { Toast } from "../../components/ui/Toast";
 
 const Wrapper = styled.div`
     display: grid;
@@ -87,22 +88,22 @@ export function StudentProfilePage() {
     }
     const [profile, setProfile] = useState<ProfileData>(userData);
     const [isOpenModal, setIsOpenModal] = useState(false);
+    const [isOpenToast, setIsOpenToast] = useState(false);
 
     function handleChangePass(){
         setIsOpenModal(true);
     }
-
+    const emptyAvatar = 'https://www.trzepizur.pl/media/k2/items/cache/e2acd849d365015ef08ef5b696dc9e31_XL.jpg'
 
     return (
         <Wrapper>
-            {profile.avatarUrl ? (
-                <AvatarBox src={profile.avatarUrl} alt={profile.fullName} />
-            ) : (
-                <AvatarBox
-                    src="https://www.trzepizur.pl/media/k2/items/cache/e2acd849d365015ef08ef5b696dc9e31_XL.jpg"
-                    alt={profile.fullName}
-                />
-            )}
+
+            <AvatarBox
+                src={profile.avatarUrl || emptyAvatar}
+                alt={profile.fullName}
+            />
+
+
             <InfoColumn>
                 <FullName>{profile.fullName}</FullName>
                 <div>{profile.achivment}</div>
@@ -127,6 +128,14 @@ export function StudentProfilePage() {
             <ChangeModalPass
                 open={isOpenModal}
                 onClose={v => setIsOpenModal(v)}
+                onSuccess={() => setIsOpenToast(true)}
+            />
+
+            <Toast
+                open={isOpenToast}
+                onClose={() => setIsOpenToast(false)}
+                message="Изменения сохранены" 
+                type={"success"}            
             />
         </Wrapper>
     )
