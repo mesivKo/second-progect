@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import '../../index.css'
 import { TestCard } from '../../components/tests/TestCard';
 import styled from '@emotion/styled';
@@ -7,6 +7,7 @@ import type { Attempt, TestResult } from '../../types/testing';
 const Grid = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 20px;
 `;
 
 export default function StudentTestPage() {
@@ -14,6 +15,14 @@ export default function StudentTestPage() {
     const [tests, setTests] = useState<TestResult[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+
+    const items = [12, 33, 22];
+    const filtred = useMemo(
+        () => items.reduce((acc, cur) => acc + cur), 
+        [items]
+    );
+
 
     useEffect(() => {
         const tests = '/public/data/tests.json';
@@ -44,15 +53,13 @@ export default function StudentTestPage() {
         <div className="page-container">
             <h1>Тестирование №100</h1>
             <Grid>
-                <div>
-                    {tests.map(test => (
-                        <TestCard key={test.id} test={test} />
-                    ))}
-                </div>
-                <div>
-                    <h5>Таймеp</h5>
-                    <div>02:59</div>
-                </div>
+                {tests.map(test => (
+                    <TestCard 
+                        key={test.id} 
+                        test={test}
+                        lastAttempt = {attempts[0]} 
+                    />
+                ))}
             </Grid>
         </div>
     );

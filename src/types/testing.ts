@@ -20,6 +20,7 @@ export type TestMeta = {
 };
 
 export type TestResult = {
+    tags: string[];
     id: number;
     title: string;
     description: string;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Modal } from './Modal';
 import styled from '@emotion/styled';
 
@@ -12,6 +12,7 @@ const ChildContainer = styled.div`
 const TextError = styled.pre`
     font-size: 14px;
     color: red;
+    padding: 10px;
 `
 
 interface ChangeModalPassProps {
@@ -45,8 +46,9 @@ export default function ChangeModalPass(props: ChangeModalPassProps) {
 
     const pwErr = validatePassword(pw1);
     // const  проверка на одинаковость паролей инпута
-    const forValid = pw1 !== '' && pw2 !== '' && pwErr.length === 0;
     const matchErr = pw1 && pw2 && pw1 === pw2 ? '' : 'Пароли не совпадают';
+    const formValid =
+    pw1 !== '' && pw2 !== '' && pwErr.length === 0 && !matchErr;
 
     function sendPassword(newPw: string) {
         return new Promise<void>((resolve, reject) => {
@@ -60,9 +62,11 @@ export default function ChangeModalPass(props: ChangeModalPassProps) {
         });
     }
 
+    console.log(filtred);
     async function onSubmit() {
-        if (!forValid) {
+        if (!formValid) {
             return;}
+        setSubmitting(false);
 
         try {
             await sendPassword(pw1);
@@ -85,7 +89,7 @@ export default function ChangeModalPass(props: ChangeModalPassProps) {
                 <>
                     <button onClick={() => onClose(false)}>Отменить</button>
                     <button
-                        disabled={!forValid || submitting}
+                        disabled={!formValid || submitting}
                         onClick={() => onSubmit()}
                     >
                         Подтвердить
@@ -111,9 +115,9 @@ export default function ChangeModalPass(props: ChangeModalPassProps) {
                     />
                 </label>
             </ChildContainer>
-            <TextError>{serverErr}</TextError>
-            <TextError>{matchErr}</TextError>
-            <TextError>{pwErr.join('\n')}</TextError>
+            {serverErr && <TextError>{serverErr}</TextError>}
+            {serverErr && <TextError>{matchErr}</TextError>}
+            {serverErr && <TextError>{pwErr.join('\n')}</TextError>}
             <button onClick={() => validatePassword('1234jebkn')}>333</button>
         </Modal>
     );

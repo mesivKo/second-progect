@@ -96,9 +96,9 @@ export function SearchIcon() {
             d="M15 15L21 21M10 17C6.13401 17 3 13.866 3 10C3 
             6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17Z" 
             stroke="#09090B" 
-            stroke-width="1.5" 
-            stroke-linecap="round" 
-            stroke-linejoin="round"
+            strokeWidth="1.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
         />
     </svg>
   )
@@ -117,8 +117,8 @@ export function CloseIcon() {
             9.99985L6.66699 6.6665M10.0003 9.99985L13.3337 
             6.6665M10.0003 9.99985L6.66699 13.3332" 
             stroke="#0E73F6" 
-            stroke-linecap="round" 
-            stroke-linejoin="round"/>
+            strokeLinecap="round" 
+            strokeLinejoin="round"/>
     </svg>
   )
 }
