@@ -4,11 +4,14 @@ import { LoginPage } from "../pages/Login/LoginPage";
 import { AdminPage } from "../pages/Admin/AdminPage";
 import { StudentPage } from "../pages/Student/StudentPage";
 import { NotFoundPage } from "../pages/Errors/NotFoundPage";
-import StudentsTestListPage from "../pages/Student/StudentsTestListPage";
+
 import StudentTestPage from "../pages/Student/StudentTestPage";
 import { StudentLayout } from "../layouts/StudentLayout";
 import { AdminLayout } from "../layouts/AdminLayout";
 import { StudentProfilePage } from "../pages/Student/StudentProfilePage";
+import { StudentRunTests } from "../pages/Student/StudentRunTests";
+import { StudentResultPage } from "../pages/Student/StudentResultPage";
+import { StudentStatiscs } from "../pages/Student/StudentStatiscs";
 
 export const router = createBrowserRouter([
     {
@@ -21,11 +24,12 @@ export const router = createBrowserRouter([
                 element: <StudentLayout />,
                 children: [
                     {index: true, element: <StudentPage />},
-                    {path: 'tests', element: <StudentsTestListPage />},
-                    {path: 'test/:id', element: <StudentTestPage />},
+                    {path: 'tests', element: <StudentTestPage />},
+                    {path: 'test/:id', element: <StudentRunTests />},
+                    {path: 'test/:id/result', element: <StudentResultPage />},
                     {
                     path: 'statistics',
-                        element: <h2>Student statistics</h2>,
+                        element: <StudentStatiscs/>,
                     },
                     {
                         path: 'profile',

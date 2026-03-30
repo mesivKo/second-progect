@@ -3,6 +3,7 @@ import '../../index.css'
 import { TestCard } from '../../components/tests/TestCard';
 import styled from '@emotion/styled';
 import type { Attempt, TestResult } from '../../types/testing';
+import { Loader } from '../../components/ui/Loader';
 
 const Grid = styled.div`
     display: grid;
@@ -15,13 +16,6 @@ export default function StudentTestPage() {
     const [tests, setTests] = useState<TestResult[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
-
-    const items = [12, 33, 22];
-    const filtred = useMemo(
-        () => items.reduce((acc, cur) => acc + cur), 
-        [items]
-    );
 
 
     useEffect(() => {
@@ -46,8 +40,20 @@ export default function StudentTestPage() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <div className="custom-loader" />;
+    const lastAttemptByTest = useMemo(() => {
+        const testAt = new Map();
+        const result = attempts.filter(att => att.userId === 1);
+
+        for (const value of result) {
+            testAt.set(value.testId, value);
+        }
+
+        return testAt;
+    }, [attempts]);
+
+    if (loading) return <Loader />;
     if (error) return <div style={{ color: 'red' }}>{error}</div>;
+    
 
     return (
         <div className="page-container">
@@ -57,7 +63,7 @@ export default function StudentTestPage() {
                     <TestCard 
                         key={test.id} 
                         test={test}
-                        lastAttempt = {attempts[0]} 
+                        lastAttempt = {lastAttemptByTest.get(test.id)}
                     />
                 ))}
             </Grid>

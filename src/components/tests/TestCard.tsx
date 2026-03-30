@@ -1,5 +1,8 @@
 import styled from "@emotion/styled";
 import type { Attempt, TestResult } from "../../types/testing";
+import { CalendarIcon, DoneIcon, RestartIcon, TimeIcon } from "../../icons/icons";
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
+import { useMemo } from "react";
 
 
 const Card = styled.article`
@@ -29,6 +32,8 @@ const Description = styled.p`
 
 const Tags = styled.div`
   display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
 `;
 
 const Tag = styled.div`
@@ -63,12 +68,135 @@ const Score = styled.span`
 `;
 
 const MaxScore = styled.span`
-    font-size: 26.4px;
-    line-height: 1;
-    color: #0e73f64d;
-    font-weight: 600;
-    line-height: 1;
+  font-size: 26.4px;
+  line-height: 1;
+  color: #0e73f64d;
+  font-weight: 600;
+  line-height: 1;
 `;
+
+const Row = styled.div`
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 30px;
+`;
+
+const Time = styled.div`
+  font-size: 12px;
+  line-height: 1;
+  color: #0e73f6;
+  border: 1px solid #f4f9ff;
+  border-radius: 10px;
+  padding: 7px 12px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+`;
+
+const Calendar = styled.div`
+  font-size: 12px;
+  line-height: 1;
+  color: #f4f9ff;
+  border: 1px solid #ffa528;
+  background-color: #ffa528;
+  border-radius: 10px;
+  padding: 7px 12px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+`;
+
+
+const ContentBtn = styled.div`
+    display: flex;
+    justify-content: flex-end;
+`;
+
+const BaseButton = styled.button`
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 14px;
+line-height: 1.71;
+font-weight: 600;
+padding: 7px 20px;
+min-width: 122px;
+border-radius: 10px;
+cursor: pointer;
+transition: all 0.2s ease;
+
+&:disabled {
+opacity: 0.5;
+cursor: not-allowed;
+}
+`;
+
+const PrimaryButton = styled(BaseButton)`
+color: #fff;
+background-color: #0e73f6;
+border: 1px solid #0e73f6;
+
+&:hover {
+background-color: #0c63d4;
+border-color: #0c63d4;
+}
+`;
+
+const SuccessButton = styled(BaseButton)`
+color: #fff;
+background-color: #00c63f;
+border: 1px solid #00c63f;
+
+&:hover {
+background-color: #00b037;
+border-color: #00b037;
+}
+`;
+
+const OutlineButton = styled(BaseButton)`
+color: #09090b;
+background-color: transparent;
+border: 1px solid #dde2e4;
+
+&:hover {
+background-color: #f8f9fa;
+border-color: #0e73f6;
+}
+`;
+
+export function formatIsoToDDMMYYYY(iso?: string | null): string | null{
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+
+  const dd = String(d.getUTCDate()).padStart(2, "0");
+  const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+  const yyyy = d.getUTCFullYear();
+
+  return `${dd}.${mm}.${yyyy}`;
+}
+
+function formatSecondsToMinutes(seconds?: number | null): string | null {
+  if (!seconds) return null;
+
+  const minutes = Math.round(seconds / 60);
+
+  // Определяем правильное склонение
+  const lastDigit = minutes % 10;
+  const lastTwoDigits = minutes % 100;
+
+  let minuteWord = 'минут'; // по умолчанию
+
+  if (lastDigit === 1 && lastTwoDigits !== 11) {
+  minuteWord = 'минута';
+  } else if (lastDigit >= 2 && lastDigit <= 4 && !(lastTwoDigits >= 12 && lastTwoDigits <= 14)) {
+  minuteWord = 'минуты';
+  }
+
+  return `${minutes} ${minuteWord}`;
+}
 
 type TestCardProps = {
   test: TestResult;
@@ -80,19 +208,75 @@ export function TestCard(props: TestCardProps) {
   // const description = lastAttempt ? lastAttempt.score : 'No attempt'
   const scoreText =
   lastAttempt?.status === 'graded' ? lastAttempt?.score / 10 : null;
-  console.log(scoreText);
+  const deadline = formatIsoToDDMMYYYY(test.deadlineISO);
+  const duration = formatSecondsToMinutes(test.durationSec);
+  const {state} = useLocation();
+  const navigate = useNavigate();
+  const attStatus = lastAttempt?.status === 'graded';
 
+    console.log('TestCard props:', { 
+    test, 
+    testId: test.id, 
+    testIdType: typeof test.id,
+    testIdRaw: JSON.stringify(test.id)
+  });
+  
+  const btnText = useMemo(() => {
+      if (test.allowRetry && attStatus)
+          return { name: 'retry', label: 'Пройти заново' };
+      if (!test.allowRetry && attStatus)
+          return { name: 'done', label: 'Выполнено' };
+      return { name: 'start', label: 'Пройти' };
+  }, [attStatus, test.allowRetry]);
+
+  function handleClick() {
+    if (btnText.name === 'done') return;
+    navigate(`/student/test/${test.id}`, {
+      state: {durationSec: test.durationSec},
+    });
+
+  }
   return (
     <Card>
         <Title>{test.title}</Title>
-        <Description>{test.description}</Description>
+        <Description>{test.shortDescription}</Description>
 
         <Tags>
         {test.tags.map((t, i) => (
             <Tag key={i}>{t}</Tag>
         ))}
         </Tags>
+        <Row>
+            {deadline && (
+              <Calendar>
+                <CalendarIcon/> {deadline}
+              </Calendar>
+            )}
+            {duration && (
+                <Time>
+                    <TimeIcon /> {duration}
+                </Time>
+            )}
+        </Row>
+        <ContentBtn>
+          {btnText.name === 'retry' && (
+              <OutlineButton onClick={() => handleClick()}>
+                  {btnText.label} <RestartIcon />
+              </OutlineButton>
+          )}
 
+          {btnText.name === 'done' && (
+              <SuccessButton disabled>
+                  {btnText.label} <DoneIcon />
+              </SuccessButton>
+          )}
+
+          {btnText.name === 'start' && (
+              <PrimaryButton onClick={() => handleClick()}>
+                  {btnText.label} 
+              </PrimaryButton>
+          )}
+      </ContentBtn>
         {!!scoreText && (
             <ScoreContent>
                 <Score>{scoreText}</Score>

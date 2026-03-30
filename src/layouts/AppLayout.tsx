@@ -1,15 +1,20 @@
 import { Outlet } from 'react-router-dom';
 import { NavMenu } from '../components/NavMenu';
+import { StoreProvider } from '../store/StoreProvider';
 
 export function AppLayout() {
     return (
-        <div>
-            <main>
+        <>
+            <header>
                 <NavMenu />
-                <Outlet />
+            </header>
+            <main>
+                <StoreProvider>
+                    <Outlet />
+                </StoreProvider>
             </main>
             <footer>2025</footer>
-        </div>
+        </>
     );
 
 }

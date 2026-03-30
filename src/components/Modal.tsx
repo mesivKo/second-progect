@@ -42,7 +42,7 @@ interface ModalProps {
     title: string;
     open: boolean;
     onClose: (v: boolean) => void;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     footer?: React.ReactNode;
 }
 
@@ -60,7 +60,7 @@ export function Modal(props: ModalProps) {
     }, [open, onClose]);
 
     if (!open) return;
-
+    
     return (
             <Overlay onClick={ () => onClose(false)}>
                 <ModalContainer onClick={ e => e.stopPropagation()}>

@@ -1,33 +1,71 @@
-export type statusAttempts = 'in_progress' | 'graded' | 'submited';
-
 export type Attempt = {
-    id: number;
-    testId: number;
-    userId: number;
-    //startedAt: '2025-10-01T14:25:00Z';
-    //finishedAt: '2025-10-01T14:35:00Z';
-    timeSpent: number;
-    score: number;
-    status: statusAttempts;
+  id: number;
+  testId: number;
+  userId: number;
+  timeSpent: number;
+  score: number;
+  startedAt: string;
+  finishedAt: string;
+  status: "in_progress" | "completed" | "graded";
 };
 
 export type TestMeta = {
-    id: number;
-    project: string;
-    course: string;
-    direction: number;
-    goal: string;
+  project: string;
+  course: string;
+  track: number;
+  purpose: string;
 };
 
 export type TestResult = {
-    tags: string[];
-    id: number;
-    title: string;
-    description: string;
-    duration: number;
-    lastAttempt: number | null;
-    attemptsRemaining: number;
-    reborn: boolean;
-    meta: TestMeta;
-    attempt: Attempt;
-}
+  id: number;
+  title: string;
+  shortDescription: string;
+  passScore: number;
+  attemptsAllowed: number;
+  lastAttempt: number | null;
+  durationSec: number;
+  allowRetry: boolean;
+  deadlineISO: string;
+  tags: string[];
+  meta: TestMeta;
+  attempt: Attempt;
+};
+
+
+export type QuestionType = 'single' | 'multiple' | 'text';
+
+export type QuestionBase = {
+correct?: string | string[];
+id: number;
+score: number;
+shuffle?: boolean;
+testId: number;
+text: string;
+};
+
+export type TextQuestion = QuestionBase & {
+  type: 'text';
+};
+
+export type SingleQuestion = QuestionBase & {
+  type: 'single';
+  options: string[];
+};
+
+export type MultipleQuestion = QuestionBase & {
+  type: 'multiple';
+  options: string[];
+};
+
+export type Question = TextQuestion | SingleQuestion | MultipleQuestion;
+
+export type QuestionResult = {
+  questionId: number;
+  score: number;
+  correctAnswer?: string | string[];
+  userAnswer?: string | string[];
+  isCorrect: boolean;
+  maxScore: number;
+};
+
+export type AnswersState = Record<number, string | string[]>;

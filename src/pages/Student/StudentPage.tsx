@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import StudentTestPage from "./StudentsTestListPage";
+import StudentTestPage from "./StudentTestPage";
+
 
 export function StudentPage(){
     const navigate = useNavigate();

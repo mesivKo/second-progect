@@ -62,7 +62,7 @@ export default function ChangeModalPass(props: ChangeModalPassProps) {
         });
     }
 
-    console.log(filtred);
+
     async function onSubmit() {
         if (!formValid) {
             return;}
