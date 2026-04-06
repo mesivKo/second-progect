@@ -17,6 +17,7 @@ export type TestMeta = {
 };
 
 export type TestResult = {
+  isPublished: unknown;
   id: number;
   title: string;
   shortDescription: string;
@@ -69,3 +70,10 @@ export type QuestionResult = {
 };
 
 export type AnswersState = Record<number, string | string[]>;
+
+export type UiStateLoading = {
+  isLoading: boolean;
+  error: string;
+  finished: boolean;
+  remainingTime: number;
+};
